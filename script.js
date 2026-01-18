@@ -1,15 +1,21 @@
 const API_KEY = "1d3a0eefa97b499d8fbc4ee93eeb40b7";
 const url = "https://newsapi.org/v2/everything?q=";
+
 window.addEventListener("load", () => fetchNews("India"));
 
 function reload() {
     window.location.reload();
 }
+
 async function fetchNews(query) {
     try {
-        const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
-        if(!res.ok) throw new Error("Network response was not ok");
+        const res = await fetch(`${url}${encodeURIComponent(query)}&apiKey=${API_KEY}`);
+        if (!res.ok) throw new Error("Network response was not ok");
         const data = await res.json();
+        if (!data.articles || data.articles.length === 0) {
+            document.getElementById("cards-container").innerHTML = "<h2>No news found.</h2>";
+            return;
+        }
         bindData(data.articles);
     } catch (error) {
         console.error("Fetch error:", error);
@@ -32,20 +38,19 @@ function bindData(articles) {
 }
 
 function fillDataInCard(cardClone, article) {
-    const newsImg = cardClone.querySelector("#news-img");
-    const newsTitle = cardClone.querySelector("#news-title");
-    const newsSource = cardClone.querySelector("#news-source");
-    const newsDesc = cardClone.querySelector("#news-desc");
+    const newsImg = cardClone.querySelector(".news-img");
+    const newsTitle = cardClone.querySelector(".news-title");
+    const newsSource = cardClone.querySelector(".news-source");
+    const newsDesc = cardClone.querySelector(".news-desc");
 
     newsImg.src = article.urlToImage;
-    newsTitle.innerHTML = article.title;
-    newsDesc.innerHTML = article.description;
+    newsTitle.textContent = article.title || "";
+    newsDesc.textContent = article.description || "";
 
     const date = new Date(article.publishedAt).toLocaleString("en-US", {
         timeZone: "Asia/Jakarta",
     });
-
-    newsSource.innerHTML = `${article.source.name} · ${date}`;
+    newsSource.textContent = `${article.source.name} · ${date}`;
 
     cardClone.firstElementChild.addEventListener("click", () => {
         window.open(article.url, "_blank");
@@ -65,11 +70,10 @@ const searchButton = document.getElementById("search-button");
 const searchText = document.getElementById("search-text");
 
 searchButton.addEventListener("click", () => {
-    const query = searchText.value;
+    const query = searchText.value.trim();
     if (!query) return;
     fetchNews(query);
     curSelectedNav?.classList.remove("active");
     curSelectedNav = null;
-    searchText.value="";
+    searchText.value = "";
 });
-
