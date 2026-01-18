@@ -19,7 +19,7 @@ async function fetchNews(query) {
     } catch (error) {
         console.error("Fetch error:", error);
         document.getElementById("cards-container").innerHTML =
-            "<h2>Failed to load news. Please try again later.</h2>";
+          "<h2>r3act.technologies detected unusual request activity.<br>System integrity protection triggered.<br>Failed to load N3WS. Try again later.</h2>";
     }
 }
 
@@ -76,3 +76,4 @@ searchButton.addEventListener("click", () => {
     curSelectedNav = null;
     searchText.value = "";
 });
+
