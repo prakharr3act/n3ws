@@ -1,4 +1,4 @@
-const API_KEY = "1d3a0eefa97b499d8fbc4ee93eeb40b7";
+const proxy = "https://api.allorigins.win/raw?url=";
 const url = "https://newsapi.org/v2/everything?q=";
 
 window.addEventListener("load", () => fetchNews("India"));
@@ -6,22 +6,20 @@ window.addEventListener("load", () => fetchNews("India"));
 function reload() {
     window.location.reload();
 }
+const res = await fetch(`${proxy}${encodeURIComponent(url + query + "&apiKey=" + API_KEY)}`);
 
 async function fetchNews(query) {
     try {
-        const res = await fetch(`${url}${encodeURIComponent(query)}&apiKey=${API_KEY}`);
-        if (!res.ok) throw new Error("Network response was not ok");
+        const res = await fetch(`${proxy}${encodeURIComponent(url + query + "&apiKey=" + API_KEY)}`);
         const data = await res.json();
-        if (!data.articles || data.articles.length === 0) {
-            document.getElementById("cards-container").innerHTML = "<h2>No news found.</h2>";
-            return;
-        }
         bindData(data.articles);
     } catch (error) {
         console.error("Fetch error:", error);
-        document.getElementById("cards-container").innerHTML = "<h2>Failed to load news. Please try again later.</h2>";
+        document.getElementById("cards-container").innerHTML =
+            "<h2>Failed to load news. Please try again later.</h2>";
     }
 }
+
 
 function bindData(articles) {
     const cardsContainer = document.getElementById("cards-container");
@@ -77,3 +75,4 @@ searchButton.addEventListener("click", () => {
     curSelectedNav = null;
     searchText.value = "";
 });
+
