@@ -4,18 +4,17 @@ const url = "https://newsapi.org/v2/everything?q=";
 
 window.addEventListener("load", () => fetchNews("India"));
 
-function reload() {
-    window.location.reload();
-}
-
 async function fetchNews(query) {
+    if (!query) return;
     try {
         const res = await fetch(`${proxy}${encodeURIComponent(url + query + "&apiKey=" + API_KEY)}`);
         const data = await res.json();
+
         if (!data.articles || data.articles.length === 0) {
             document.getElementById("cards-container").innerHTML = "<h2>No news found.</h2>";
             return;
         }
+
         bindData(data.articles);
     } catch (error) {
         console.error("Fetch error:", error);
@@ -28,6 +27,7 @@ function bindData(articles) {
     const cardsContainer = document.getElementById("cards-container");
     const newsCardTemplate = document.getElementById("template-news-card");
     cardsContainer.innerHTML = "";
+
     articles.forEach((article) => {
         if (!article.urlToImage) return;
         const cardClone = newsCardTemplate.content.cloneNode(true);
